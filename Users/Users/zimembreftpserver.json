@@ -1,0 +1,39 @@
+[
+  {
+    "applicationbdir":"/Users/imac/Code/hack/zImembre/basedir/"
+    
+  },
+  
+  {
+    "comment":"Permissions are bitwise xrw, so 2 will be RD_ONLY, 1 will be WR_ONLY. So this number will be 2 and sometimes 3."
+  },
+  {
+    "accountname":"demo-admin",
+    "password":"demo-admin",
+    "permissions": 2,
+    "bdir":"./",
+    "roles":["admin","user"],
+    "quota":10,
+    "lastDir":"./"
+  },
+  {
+    "accountname":"admin",
+    "password":"admin",
+    "permissions":3,
+    "bdir":"./",
+    "roles":["admin"],
+    "quota":10,
+    "lastDir":"./"
+  },
+  {
+    "accountname":"julianguarin2010",
+    "password":"1234",
+    "permissions":3,
+    "bdir":"./",
+    "roles":["admin","user"],
+    "quota":10,
+    "lastDir":"./"
+  }
+  
+  
+]
