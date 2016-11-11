@@ -10,13 +10,62 @@
 #ifndef Users_
 #define Users_
 
+#include <fstream>
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#include "json.hpp"
+#pragma clang pop
+
+
+class User{
+    typedef enum UserRole{ ADMIN=1, USER=0 }UserRole;
+    typedef enum UserPermission { USER_JOKER = 4, USER_RD = 2, USER_WR = 1, USER_RDWR = 3 }UserPermission;
+    
+    std::string m_userBaseDir;
+    std::string m_currentWorkingDir;
+    nlohmann::json m_userRegister;
+    
+    /* From / To Json Values */
+    std::string             m_accountname;
+    std::string             m_password;
+    UserPermission          m_permissions;
+    std::string             m_baseDir;
+    unsigned int            m_role;
+    int                     m_quota;
+    std::string             m_lastDir;
+public:
+    bool                    m_validUser;
+    User(nlohmann::json userEntry);
+    
+    
+};
 
 class Users
 {
-    public:
     
-    Users (const char *);
+    std::string     m_configFilePath;
+    nlohmann::json  m_j;
+    nlohmann::json  m_user;
+    
+    
+    
+    
+
+
+
+public:
+    
+    Users (const char * jsonpath);
+    ~Users(){}
+    
+    
+    void userDump();
+    int userCount();
+    bool userExist(char * user);
+
+    User user(char * user);
     
 };
+
 
 #endif
