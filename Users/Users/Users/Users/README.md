@@ -9,9 +9,3 @@ The next step will be to encrypt the file.
 The next step will be to use sqlite to manage users data. 
 
 
-
-An User object:
-
-	Is constructed with, Users(const char * file), ~Users()
-
-	Using jsonobject 

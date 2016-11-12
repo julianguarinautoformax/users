@@ -11,28 +11,28 @@
     "accountname":"demo-admin",
     "password":"demo-admin",
     "permissions": 2,
-    "bdir":"/",
+    "bdir":"./",
     "roles":["admin","user"],
     "quota":10,
-    "lastDir":"/"
+    "lastDir":"./"
   },
   {
     "accountname":"admin",
     "password":"admin",
     "permissions":3,
-    "bdir":"/",
+    "bdir":"./",
     "roles":["admin"],
     "quota":10,
-    "lastDir":"/"
+    "lastDir":"./"
   },
   {
     "accountname":"julianguarin2010",
     "password":"1234",
     "permissions":3,
-    "bdir":"/",
+    "bdir":"./",
     "roles":["admin","user"],
     "quota":10,
-    "lastDir":"/"
+    "lastDir":"./"
   }
   
   

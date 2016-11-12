@@ -28,6 +28,4 @@
 *.out
 *.app
 
-
-*xcodeproj*
 json/
