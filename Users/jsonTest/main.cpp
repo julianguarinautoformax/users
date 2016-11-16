@@ -19,8 +19,18 @@ int main(int argc, const char * argv[]) {
     
     Users x("/Users/imac/Code/hack/users/Users/Users/zimembreftpserver.json");
     
-    cout << "El numero de registros que tenemos que tenemos es: " << x.userCount() << endl;
-    x.userDump();
+    User jg = x.user((char*)"julianguarin2010");
+    if (x.userExist("someuser")){
+        x.userDelete(x.user((char*)"someuser"));
+    } else {
+        
+        x.userCreate("someuser", "1234", USER_ROLE_USER, User::USER_RDWR);
+        User xu = x.user((char*) "someuser");
+        x.userDump();
+        xu.set_password("Amoreseriou$password");
+        x.userUpdate(xu);
+        
+    }
     
     return 0;
 }
