@@ -24,6 +24,8 @@ using namespace std;
 
 User::User(nlohmann::json userEntry, std::string appServerPath):
     m_accountname(userEntry["accountname"].get<string>()),
+    m_originalAccountName(userEntry["accountname"].get<string>()),
+    m_dirtybit(false),
     m_password(userEntry["password"].get<string>()),
     m_baseDir(userEntry["bdir"].get<string>()),
     m_lastDir(userEntry["lastDir"].get<string>()),

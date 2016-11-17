@@ -26,6 +26,9 @@ public:
 private:
     
     /************** MACHINE FILE SYSTEM REFERENCED **********/
+    bool            m_dirtybit;
+    std::string     m_originalAccountName;
+    
     std::string     m_userBaseDir;
     std::string     m_currentWorkingDir;
     nlohmann::json  m_userRegister;
@@ -39,7 +42,7 @@ private:
     int             m_quota;
     int             m_leftquota;
     std::string     m_lastDir;
-
+    
     void            userUpdateLastDir();
 public:
     /* Object CTRs and validation */
@@ -66,22 +69,22 @@ public:
     
     
     /* Getters and Setters */
-    void            set_accountname(std::string an) {m_accountname = an;}
+    void            set_accountname(std::string an) {m_accountname = an; m_dirtybit = true;}
     std::string     accountname()                   {return m_accountname;}
     
-    void            set_password(std::string an) {m_password = an;}
+    void            set_password(std::string an) {m_password = an; m_dirtybit = true;}
     std::string     password()                   {return m_password;}
     
-    void            set_permissions(UserPermission an) {m_permissions = an;}
+    void            set_permissions(UserPermission an) {m_permissions = an; m_dirtybit = true;}
     UserPermission  permissions()                      {return m_permissions;}
     
-    void            set_baseDir(std::string an) {m_baseDir = an;}
+    void            set_baseDir(std::string an) {m_baseDir = an; m_dirtybit = true;}
     std::string     baseDir()                   {return m_baseDir;}
     
-    void            set_role(unsigned int an)   {m_role = an;}
+    void            set_role(unsigned int an)   {m_role = an; m_dirtybit = true;}
     unsigned int    role()                      {return m_role;}
     
-    void            set_quota(int an)   {m_quota = an;}
+    void            set_quota(int an)   {m_quota = an < (m_quota - m_leftquota) ? m_quota - m_leftquota : an ; m_dirtybit = true;}
     int             quota()             {return m_quota;}
     
     
