@@ -16,7 +16,10 @@
     "roles": [
       "admin",
       "user"
-    ]
+    ],
+    "ipaccess":{
+
+    }
   },
   {
     "accountname": "admin",
@@ -28,7 +31,10 @@
     "quota": 10,
     "roles": [
       "admin"
-    ]
+    ],
+    "ipaccess":{
+    	
+    }
   },
   {
     "accountname": "julianguarin2010",
@@ -41,6 +47,9 @@
     "roles": [
       "admin",
       "user"
-    ]
+    ],
+    "ipaccess":{
+    	
+    }
   }
 ]
