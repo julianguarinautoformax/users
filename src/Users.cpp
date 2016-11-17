@@ -31,6 +31,7 @@ User::User(nlohmann::json userEntry, std::string appServerPath):
     m_leftquota(userEntry["leftQuota"].get<int>())
 {
     m_validUser = true;
+    m_authUser  = false;
     
     int prm = userEntry["permissions"].get<int>();
     m_permissions = prm==1 ? USER_WR : (prm == 2 ? USER_RD : (prm == 3 ? USER_RDWR : (prm == 4 ? USER_JOKER : USER_RD)));
@@ -70,11 +71,12 @@ void User::userUpdateLastDir(){
 }
 bool User::userIsAuthorized(std::string & password){
     
-    bool auth =  (m_password.compare(password) == 0);
-    if (auth){
+    m_authUser = (m_password.compare(password) == 0);
+    if (m_authUser){
         userChdir(m_lastDir);
     }
-    return auth;
+    m_validUser = m_authUser;
+    return m_authUser;
 }
 
 

@@ -44,6 +44,8 @@ private:
 public:
     /* Object CTRs and validation */
     bool            m_validUser;
+    bool            m_authUser;
+    
     User()          {m_validUser = false;}
     ~User()         {}
     User(nlohmann::json userEntry, std::string appServerPath);
