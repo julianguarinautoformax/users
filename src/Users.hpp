@@ -124,6 +124,9 @@ public:
     int             userDelete(User user);
     
     
+/*** Queries **/
+    
+    nlohmann::json  accountQueryByRole(unsigned int role = USER_ROLE_USER);
     
 
     
