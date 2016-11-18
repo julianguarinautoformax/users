@@ -30,6 +30,7 @@ User::User(nlohmann::json userEntry, std::string appServerPath):
     m_baseDir(userEntry["bdir"].get<string>()),
     m_lastDir(userEntry["lastDir"].get<string>()),
     m_quota(userEntry["quota"].get<int>()),
+    m_role(userEntry["roles"].get<int>()),
     m_leftquota(userEntry["leftQuota"].get<int>())
 {
     m_validUser = true;
@@ -37,15 +38,6 @@ User::User(nlohmann::json userEntry, std::string appServerPath):
     
     int prm = userEntry["permissions"].get<int>();
     m_permissions = prm==1 ? USER_WR : (prm == 2 ? USER_RD : (prm == 3 ? USER_RDWR : (prm == 4 ? USER_JOKER : USER_RD)));
-    
-    
-    nlohmann::json roles = userEntry["roles"];
-    m_role = 0;
-    for (nlohmann::json roleEntry_json:roles){
-        std::string roleEntry = roleEntry_json.get<string>();
-        if (!roleEntry.compare("admin")) m_role|= USER_ROLE_ADMIN;
-        if (!roleEntry.compare("user"))  m_role|= USER_ROLE_USER;
-    }
     
     /* Configure directions */
     m_userBaseDir = appServerPath+m_baseDir;
@@ -55,7 +47,7 @@ User::User(nlohmann::json userEntry, std::string appServerPath):
         DirUtils::absoluteMakeDir(m_userBaseDir, m_userBaseDir, m_currentWorkingDir);
     }
     
-    
+    /* Configure Ip Access */
     userUpdateLastDir();
     
     
@@ -198,6 +190,7 @@ int Users::updateUserIntoModel(nlohmann::json existingAccount){
         m_j.insert(m_j.begin()+index,existingAccount);
         
     }
+    crudError = CRUD_ERROR;
     return princemgeahit == -1 ? -1 : persistModel();
     
     
@@ -259,8 +252,12 @@ int Users::userIndex(std::string username){
 }
 int Users::userCreate(std::string accountname, std::string password, unsigned int roles, User::UserPermission perm, int quota){
     
+    /* Check user existance */
     nlohmann::json account = m_user[accountname];
-    if (account.type()!=nlohmann::json::value_t::null) return -1;
+    if (account.type()!=nlohmann::json::value_t::null){
+        crudError = CRUD_USR_EXIST;
+        return -1;
+    }
     
     account["accountname"] = accountname;
     account["bdir"] = "/"+accountname;
@@ -268,17 +265,27 @@ int Users::userCreate(std::string accountname, std::string password, unsigned in
     account["password"] = password;
     account["permissions"] = perm==User::USER_WR ? 1 : (perm == User::USER_RD ? 2 : (perm == User::USER_RDWR ? 3 : (perm == User::USER_JOKER ? 4 : 2)));
     
-    nlohmann::json roles_j = {};
-    if (roles & 0x1) roles_j.push_back("user");
-    if (roles & 0x2) roles_j.push_back("admin");
-    account["roles"] = roles_j;
-    
+    account["roles"] = roles;
     account["quota"] = quota;
     account["leftQuota"] = quota;
+    
     m_user[accountname] = account;
     
     return commitNewUserIntoModel(account);
     
+}
+int Users::userCreate(nlohmann::json newUser){
+    
+    std::string accountname = newUser["accountname"].get<std::string>();
+    std::string password = newUser["password"].get<std::string>();
+    unsigned int roles = newUser["roles"].get<unsigned int>();
+    unsigned int prm = newUser["permissions"].get<unsigned int>();
+    
+    User::UserPermission perms = prm==1 ? User::USER_WR : (prm == 2 ? User::USER_RD : (prm == 3 ? User::USER_RDWR : (prm == 4 ? User::USER_JOKER : User::USER_RD)));
+    unsigned int quota = newUser["quota"].get<unsigned int>();
+    
+    return userCreate(accountname, password, roles, perms, quota);
+
 }
 User Users::user(std::string user){
     
@@ -291,7 +298,9 @@ User Users::user(std::string user){
     
     return User();
 }
-
+nlohmann::json Users::user_j(std::string user){
+    return m_user[user];
+}
 int Users::userUpdate(User user, bool createOnNonExistance){
     std::string accountname = user.accountname();
     bool accountE = userExist(accountname);
@@ -305,16 +314,21 @@ int Users::userUpdate(User user, bool createOnNonExistance){
     m_user[accountname]["permissions"] = user.permissions();
     m_user[accountname]["quota"] = user.quota();
     m_user[accountname]["leftQuota"] = user.userLeftQuotaFast();
-    
-    unsigned int roles = user.role();
-    nlohmann::json roles_j = {};
-    if (roles & 0x1) roles_j.push_back("user");
-    if (roles & 0x2) roles_j.push_back("admin");
-    m_user[accountname]["roles"] = roles_j;
+    m_user[accountname]["roles"] = user.role();
     
     if (accountE)   return updateUserIntoModel(m_user[accountname]);
     else            return commitNewUserIntoModel(m_user[accountname]);
 
+}
+int Users::userUpdate(nlohmann::json account){
+    
+    std::string accountname = account["accountname"].get<std::string>();
+    bool accountE = userExist(accountname);
+    if(!accountE){
+        crudError = CRUD_USR_DONT_EXIST;
+        return -1;
+    }
+    return updateUserIntoModel(account);
 }
 int Users::userDelete(User user){
     std::string accountname = user.accountname();
@@ -328,5 +342,15 @@ int Users::userDelete(User user){
     deleteUserFromModel(hitindex);
     return 0;
 }
-
+nlohmann::json Users::accountUsersByRole(unsigned int roles){
+    
+    nlohmann::json us(nlohmann::json::value_t::array);
+    for (nlohmann::json userEntry:m_user){
+        unsigned int role = userEntry["roles"];
+        if (role & roles){
+            us.push_back(userEntry);
+        }
+    }
+    return us;
+}
 

@@ -18,6 +18,12 @@
 static const int USER_ROLE_USER  = 0x01;
 static const int USER_ROLE_ADMIN = 0x02;
 /* PSEUDO - ORM */
+
+static const int CRUD_NO_ERROR      = 0x0;
+static const int CRUD_ERROR         = 0x1;
+static const int CRUD_USR_EXIST     = 0x2;
+static const int CRUD_USR_DONT_EXIST= 0x3;
+
 class User{
 
 public:
@@ -42,6 +48,9 @@ private:
     int             m_quota;
     int             m_leftquota;
     std::string     m_lastDir;
+    std::string     m_lastIp;
+    int             m_lastTcpPort;
+    
     
     void            userUpdateLastDir();
 public:
@@ -69,24 +78,29 @@ public:
     
     
     /* Getters and Setters */
-    void            set_accountname(std::string an) {m_accountname = an; m_dirtybit = true;}
-    std::string     accountname()                   {return m_accountname;}
+    void            set_accountname(std::string an)     {m_accountname = an; m_dirtybit = true;}
+    std::string     accountname()                       {return m_accountname;}
     
-    void            set_password(std::string an) {m_password = an; m_dirtybit = true;}
-    std::string     password()                   {return m_password;}
+    void            set_password(std::string an)        {m_password = an; m_dirtybit = true;}
+    std::string     password()                          {return m_password;}
     
-    void            set_permissions(UserPermission an) {m_permissions = an; m_dirtybit = true;}
-    UserPermission  permissions()                      {return m_permissions;}
+    void            set_permissions(UserPermission an)  {m_permissions = an; m_dirtybit = true;}
+    UserPermission  permissions()                       {return m_permissions;}
     
-    void            set_baseDir(std::string an) {m_baseDir = an; m_dirtybit = true;}
-    std::string     baseDir()                   {return m_baseDir;}
+    void            set_baseDir(std::string an)         {m_baseDir = an; m_dirtybit = true;}
+    std::string     baseDir()                           {return m_baseDir;}
     
-    void            set_role(unsigned int an)   {m_role = an; m_dirtybit = true;}
-    unsigned int    role()                      {return m_role;}
+    void            set_role(unsigned int an)           {m_role = an; m_dirtybit = true;}
+    unsigned int    role()                              {return m_role;}
     
-    void            set_quota(int an)   {m_quota = an < (m_quota - m_leftquota) ? m_quota - m_leftquota : an ; m_dirtybit = true;}
-    int             quota()             {return m_quota;}
+    void            set_quota(int an)                   {m_quota = an < (m_quota - m_leftquota) ? m_quota - m_leftquota : an ; m_dirtybit = true;}
+    int             quota()                             {return m_quota;}
     
+    void            set_lastIp(std::string ip)          {m_lastIp = m_lastIp; m_dirtybit = true;}
+    std::string     lastIp()                            {return m_lastIp;}
+    
+    void            set_lastPort(unsigned int port)     {m_lastTcpPort = port; m_dirtybit = true;}
+    int             lastTcpPort()                       {return m_lastTcpPort;}
     
 };
 /* DATA MODEL */
@@ -105,7 +119,9 @@ private:
     int             updateUserIntoModel     (nlohmann::json existingAccount);
     int             commitNewUserIntoModel  (nlohmann::json newAccount);
     int             deleteUserFromModel     (int            accountIndex);
+
 public:
+    int             crudError;
     void            userDump();
     int             userCount();
     bool            userExist(std::string);
@@ -113,20 +129,21 @@ public:
     
     /************** CREATE USER **************/
     int             userCreate(std::string userName, std::string password, unsigned int roles, User::UserPermission perm, int quota=10);
-    
+    int             userCreate(nlohmann::json newUser);
     /*************   READ USER  **************/
     User            user(std::string user);
-    
+    nlohmann::json  user_j(std::string user);
     /************** UPDATE USER **************/
     int             userUpdate(User user, bool createOnNonExistance = false);
-    
+    int             userUpdate(nlohmann::json account);
     /************** DELETE USER **************/
     int             userDelete(User user);
     
     
-/*** Queries **/
     
-    nlohmann::json  accountQueryByRole(unsigned int role = USER_ROLE_USER);
+/*** Queries **/
+    nlohmann::json  config(){return m_j[0];}
+    nlohmann::json  accountUsersByRole(unsigned int roles = USER_ROLE_USER);
     
 
     

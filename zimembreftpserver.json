@@ -1,9 +1,11 @@
 [
   {
-    "applicationbdir": "/Users/imac/Code/hack/zImembre/basedir"
-  },
-  {
-    "comment": "Permissions are bitwise xrw, so 2 will be RD_ONLY, 1 will be WR_ONLY. So this number will be 2 and sometimes 3."
+    "applicationbdir": "/Users/imac/Code/hack/zImembre/basedir",
+    "comment": "Permissions are bitwise xrw, so 2 will be RD_ONLY, 1 will be WR_ONLY. So this number will be 2 and sometimes 3.",
+    "ftpport": 35209,
+    "ftppanelport": 35210,
+    "ftplogin": "ftplogin.log",
+    "tcpserverlogin": "tcpserverlog.log"
   },
   {
     "accountname": "demo-admin",
@@ -13,12 +15,14 @@
     "password": "demo-admin",
     "permissions": 2,
     "quota": 10,
-    "roles": [
-      "admin",
-      "user"
-    ],
+    "roles": 3,
     "ipaccess":{
 
+    },
+    "last":{
+    	"command":"",
+    	"ip":"",
+    	"tcpport":0
     }
   },
   {
@@ -29,12 +33,16 @@
     "password": "admin",
     "permissions": 3,
     "quota": 10,
-    "roles": [
-      "admin"
-    ],
+    "roles": 2,
     "ipaccess":{
     	
+    },
+    "last":{
+    	"command":"",
+    	"ip":"",
+    	"tcpport":0
     }
+
   },
   {
     "accountname": "julianguarin2010",
@@ -44,12 +52,15 @@
     "password": "1234",
     "permissions": 3,
     "quota": 10,
-    "roles": [
-      "admin",
-      "user"
-    ],
+    "roles": 3,
     "ipaccess":{
     	
+    },
+    "last":{
+    	"command":"",
+    	"ip":"",
+    	"tcpport":0
     }
+
   }
 ]
