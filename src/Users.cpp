@@ -74,29 +74,30 @@ bool User::userIsAuthorized(std::string & password){
 }
 
 
-std::string User::userCwd(){
-    return m_lastDir;
+std::string User::userCwd(bool machineCWD){
+    return machineCWD ? m_currentWorkingDir: m_lastDir;
 }
 
 
-int User::userChdir(std::string &userpath){
+int User::userChdir(std::string userpath){
     userpath = DirUtils::expandDirExpression(ubc(userpath));
     int rc =  DirUtils::absoluteChangeDir(ubc(userpath));
+    userUpdateLastDir();
     if (rc == 0) {
         
     }
     return rc;
 }
 
-int User::userMkdir(std::string&path){
+int User::userMkdir(std::string path){
     return DirUtils::relativeMakeDir(ubc(path));
 }
 
-int User::userRmDir(std::string &dirpath){
+int User::userRmDir(std::string dirpath){
     return DirUtils::relativeDeleteDir(ubc(dirpath));
 }
 
-int User::userRmFile(std::string &filepath){
+int User::userRmFile(std::string filepath){
     return DirUtils::relativeDeleteFile(ubc(filepath));
 }
 int compare(const FTSENT** one, const FTSENT** two)

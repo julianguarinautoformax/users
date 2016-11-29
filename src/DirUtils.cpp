@@ -38,6 +38,7 @@ std::string DirUtils::expandDirExpression(std::string ftpExpression, std::string
     return ftpExpression;
     
 }
+//std::string DirUtils::relativeDirExpression(std::string )
 int DirUtils::absoluteChangeDir(std::string absoluteChDirExpression, std::string machineHOME, std::string & machineCWD){
     
     
@@ -68,6 +69,7 @@ int DirUtils::absoluteChangeDir(std::string absoluteChDirExpression, std::string
     } else {
         machineCWD = resultwd;
     }
+    
     return 0;
 }
 int DirUtils::absoluteMakeDir(std::string absoluteNewDir, std::string machineHOME, std::string machineCWD){

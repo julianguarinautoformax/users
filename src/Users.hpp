@@ -65,11 +65,11 @@ public:
     bool            userIsAuthorized(std::string & password);
     
     /************** ROOT IS THE HOME DIR OF EACH USER **************/
-    std::string     userCwd();
-    int        		userChdir(std::string & path);
-    int             userMkdir(std::string & path);
-    int             userRmDir(std::string & dirpath);
-    int             userRmFile(std::string & filepath);
+    std::string     userCwd(bool machineCWD=false);
+    int        		userChdir(std::string path);
+    int             userMkdir(std::string path);
+    int             userRmDir(std::string dirpath);
+    int             userRmFile(std::string filepath);
     
     /************** BOTH FUNCTIONS UPDATE M_LEFTQUOTA **************/
     unsigned int    userUsedQuota(std::string path = "/");
