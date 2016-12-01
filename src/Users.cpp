@@ -6,9 +6,12 @@
  *  Copyright © 2016 Julian Andres Guarin. All rights reserved.
  *
  */
-#include <fts.h>
+#ifdef __CYGWIN__
+typedef unsigned short u_short;
+#endif
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <fts.h>
 
 #include <iostream>
 #include <fstream>
@@ -100,7 +103,11 @@ int User::userRmDir(std::string dirpath){
 int User::userRmFile(std::string filepath){
     return DirUtils::relativeDeleteFile(ubc(filepath));
 }
+#ifdef __CYGWIN__
+int compare(const FTSENT* const* one, const FTSENT* const*two)
+#else
 int compare(const FTSENT** one, const FTSENT** two)
+#endif
 {
     return (strcmp((*one)->fts_name, (*two)->fts_name));
 }

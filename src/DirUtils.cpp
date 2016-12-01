@@ -7,9 +7,10 @@
 //
 
 #include "DirUtils.hpp"
-
-
-
+#ifdef __CYGWIN__
+#include <string.h>
+#define bzero(x,y) memset(x,0,y)
+#endif
 static const int bufferSz = 1024;
 
 
@@ -41,23 +42,16 @@ std::string DirUtils::expandDirExpression(std::string ftpExpression, std::string
 //std::string DirUtils::relativeDirExpression(std::string )
 int DirUtils::absoluteChangeDir(std::string absoluteChDirExpression, std::string machineHOME, std::string & machineCWD){
     
-    
-    //int rc = chdir(absoluteChDirExpression.c_str());
-    int fd = open(absoluteChDirExpression.c_str(), O_RDONLY | O_CLOEXEC);
-    if (fd==-1) return fd;
-    
-    char  * machineCWD_ = new char [bufferSz];
-    bzero(machineCWD_, bufferSz);
-    int fc = fcntl(fd, F_GETPATH, machineCWD_);
-    if (fc == -1) {
-        delete [] machineCWD_;
-        return fc;
+    char machineCWD_[bufferSz];
+    getcwd(machineCWD_,bufferSz);
+    bzero(machineCWD_,bufferSz);
+    int rc = chdir(absoluteChDirExpression.c_str());
+    chdir(machineCWD_);
+    if (rc){
+        return -1;
     }
-    
-    
     /* If we are below the machineHome */
-    std::string resultwd = machineCWD_;
-    delete []machineCWD_;
+    std::string resultwd = absoluteChDirExpression;
     /* Find MACHINE HOME inside the current working directory */
     std::size_t found = resultwd.find(machineHOME);
     if (found==std::string::npos) {
@@ -75,15 +69,7 @@ int DirUtils::absoluteChangeDir(std::string absoluteChDirExpression, std::string
 int DirUtils::absoluteMakeDir(std::string absoluteNewDir, std::string machineHOME, std::string machineCWD){
     
     /* Get only directory */
-    size_t dirNamePosition = absoluteNewDir.find_last_of("/");
-    
-    /* Get Directory name */
-    std::string absoluteNewDirName = &absoluteNewDir[dirNamePosition+1];
-    absoluteNewDir = absoluteNewDir.substr(0,absoluteNewDir.find_last_of("/"));
-    int fd = open (absoluteNewDir.c_str(), O_RDONLY | O_CLOEXEC);
-    if (fd == -1 ) return fd;
-    /* Create dir with access to everyone */
-    return mkdirat(fd, absoluteNewDirName.c_str(), 0777);
+    return mkdir(absoluteNewDir.c_str(), 0777);
     
 }
 int DirUtils::relativeMakeDir(std::string relativeNewDir,std::string machineHOME, std::string machineCWD){
@@ -102,7 +88,11 @@ int DirUtils::relativeDeleteDir(std::string relativeDir, std::string machineHOME
     
     return absoluteDeleteDir(expandDirExpression(relativeDir, machineHOME, machineCWD), machineHOME, machineCWD, recursive);
 }
+#ifdef __CYGWIN__
+int DirUtils::compare(const FTSENT* const* one, const FTSENT* const* two){
+#else
 int DirUtils::compare(const FTSENT** one, const FTSENT** two){
+#endif
     return (strcmp((*one)->fts_name, (*two)->fts_name));
 }
 int DirUtils::absoluteDeleteDir(std::string absoluteDir, std::string machineHOME, std::string machineCWD, bool recursive){
