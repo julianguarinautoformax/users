@@ -152,6 +152,7 @@ Users::Users (std::string jsonpath){
     ifstream f (jsonpath);
     m_j << f;
     f.close();
+	
     m_configFilePath = jsonpath;
     for (nlohmann::json::iterator it = m_j.begin(); it<m_j.end(); ++it){
         nlohmann::json entry = *it;
@@ -160,6 +161,7 @@ Users::Users (std::string jsonpath){
         auto accountname = accountname_json.get<string>();
         m_user[accountname]=entry;
     }
+	std::cout<<m_user.dump(4)<<std::endl;
     
     
 }

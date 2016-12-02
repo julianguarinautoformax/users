@@ -2,7 +2,7 @@ AR=ar
 CC=gcc
 CP=cp
 CXX=g++
-CFLAGS=-c -std=c++11 -I. -Wunused-variable -Wno-unknown-pragmas -fpermissive
+CFLAGS=-c -std=c++14 -I. -Wunused-variable -Wno-unknown-pragmas -fpermissive
 LFLAGS=crv
 LDFLAGS=-L../lib -L../list/lib -L../queue/lib -ltcpserver -llist -lqueue 
 SOURCES=Users.cpp  DirUtils.cpp 
